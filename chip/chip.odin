@@ -20,5 +20,5 @@ when CHIP_TYPE == ChipType.SCHIP {
 Chip8 :: struct {
 	cpu:      Cpu,
 	keyboard: [16]u8,
-	memory:   [SCREEN_WIDTH * SCREEN_HEIGHT]u8,
+	memory:   [4096]u8,
 }

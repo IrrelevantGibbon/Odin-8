@@ -21,15 +21,51 @@ Nibble :: struct {
 	nnn:    u16,
 }
 
-
-fetch :: proc() {
-
+dec_x :: #force_inline proc(opcode: u16) -> u8 {
+	return u8((opcode & 0x0F00) >> 8)
 }
 
-decode :: proc() {
-
+dec_y :: #force_inline proc(opcode: u16) -> u8 {
+	return u8((opcode & 0x00F0) >> 4)
 }
 
-execute :: proc() {
+dec_n :: #force_inline proc(opcode: u16) -> u8 {
+	return u8(opcode & 0x000F)
+}
+
+dec_nn :: #force_inline proc(opcode: u16) -> u8 {
+	return u8(opcode & 0x00FF)
+}
+
+dec_nnn :: #force_inline proc(opcode: u16) -> u16 {
+	return opcode & 0x0FFF
+}
+
+emulate_cycle :: proc(cpu: ^Cpu, memory: ^[4096]u8) {
+	opcode := fetch(cpu, memory)
+	nibble := decode(opcode)
+	execute(cpu, memory, nibble)
+}
+
+fetch :: proc(cpu: ^Cpu, memory: ^[4096]u8) -> u16 {
+	opcode := u16(memory[cpu.program_counter]) << 8 | u16(memory[cpu.program_counter + 1])
+	cpu.program_counter += 2
+	return opcode
+}
+
+decode :: proc(opcode: u16) -> Nibble {
+	return(
+		Nibble {
+			opcode,
+			dec_x(opcode),
+			dec_y(opcode),
+			dec_n(opcode),
+			dec_nn(opcode),
+			dec_nnn(opcode),
+		} \
+	)
+}
+
+execute :: proc(cpu: ^Cpu, memory: ^[4096]u8, nibble: Nibble) {
 
 }
