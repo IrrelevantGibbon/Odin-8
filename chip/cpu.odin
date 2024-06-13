@@ -4,12 +4,16 @@ CYCLE_PER_FRAME :: 12
 
 Cpu :: struct {
 	v_register:      [16]u8,
-	idx_register:    u8,
+	idx_register:    u16,
 	delay_timer:     u8,
 	sound_timer:     u8,
 	program_counter: u16,
 	stack_pointer:   u8,
-	stack:           [16]u8,
+	stack:           [16]u16,
+	rpl_flag:        [8]u8,
+	memory:          proc() -> ^[4096]u8,
+	screen:          proc() -> ^Screen,
+	keys:            proc() -> ^[16]u8,
 }
 
 Nibble :: struct {
@@ -41,14 +45,15 @@ dec_nnn :: #force_inline proc(opcode: u16) -> u16 {
 	return opcode & 0x0FFF
 }
 
-emulate_cycle :: proc(cpu: ^Cpu, memory: ^[4096]u8) {
-	opcode := fetch(cpu, memory)
+emulate_cycle :: proc(cpu: ^Cpu) {
+	opcode := fetch(cpu)
 	nibble := decode(opcode)
-	execute(cpu, memory, nibble)
+	execute(cpu, nibble)
 }
 
-fetch :: proc(cpu: ^Cpu, memory: ^[4096]u8) -> u16 {
-	opcode := u16(memory[cpu.program_counter]) << 8 | u16(memory[cpu.program_counter + 1])
+fetch :: proc(cpu: ^Cpu) -> u16 {
+	opcode :=
+		u16(cpu.memory()[cpu.program_counter]) << 8 | u16(cpu.memory()[cpu.program_counter + 1])
 	cpu.program_counter += 2
 	return opcode
 }
@@ -66,6 +71,6 @@ decode :: proc(opcode: u16) -> Nibble {
 	)
 }
 
-execute :: proc(cpu: ^Cpu, memory: ^[4096]u8, nibble: Nibble) {
+execute :: proc(cpu: ^Cpu, nibble: Nibble) {
 
 }
