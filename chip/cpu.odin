@@ -51,7 +51,7 @@ dec_nnn :: #force_inline proc(opcode: u16) -> u16 {
 }
 
 init_cpu :: proc() -> Cpu {
-	return Cpu{[16]u8{}, 0, 0, 0, 0, 0, [16]u16{}, [8]u8{}, nil, nil, nil}
+	return Cpu{[16]u8{}, 0, 0, 0, OFFSET_START_PROGRAM, 0, [16]u16{}, [8]u8{}, nil, nil, nil}
 }
 
 decrement_timers :: proc(cpu: ^Cpu) {
