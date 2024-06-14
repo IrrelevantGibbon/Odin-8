@@ -206,13 +206,13 @@ LD_B :: #force_inline proc(cpu: ^Cpu, x: u8) {
 }
 
 LD_MEM :: #force_inline proc(cpu: ^Cpu, x: u8) {
-	for i in 0 ..< x {
+	for i in 0 ..= x {
 		cpu.memory[cpu.idx_register + u16(i)] = cpu.v_register[i]
 	}
 }
 
 LD_REG_MEM :: #force_inline proc(cpu: ^Cpu, x: u8) {
-	for i in 0 ..< x {
+	for i in 0 ..= x {
 		cpu.v_register[i] = cpu.memory[cpu.idx_register + u16(i)]
 	}
 }
