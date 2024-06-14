@@ -21,8 +21,17 @@ shutdown_window :: proc() {
 	rl.CloseWindow()
 }
 
-draw_on_screen :: proc() {
+draw_on_screen :: proc(screen: ^Screen) {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
+
+	for x in 0 ..< SCREEN_WIDTH {
+		for y in 0 ..< SCREEN_WIDTH {
+			i := y * SCREEN_WIDTH + x
+			if screen.frame[i] == 1 {
+				rl.DrawRectangle(i32(x), i32(y), 1, 1, rl.RAYWHITE)
+			}
+		}
+	}
 	rl.EndDrawing()
 }

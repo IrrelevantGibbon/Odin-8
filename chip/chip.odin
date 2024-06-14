@@ -42,21 +42,15 @@ init_chip :: proc() -> ^Chip8 {
 		Screen{[SCREEN_WIDTH * SCREEN_HEIGHT]u8{}, [SCREEN_WIDTH * SCREEN_HEIGHT]u8{}},
 	}
 
-	get_memory := proc() -> ^[4096]u8 {
-		return &chip.memory
-	}
-
-	get_keys := proc() -> ^[16]u8 {
-		return &chip.keys
-	}
-
-	get_screen := proc() -> ^Screen {
-		return &chip.screen
-	}
-
-	chip.cpu.keys = get_keys
-	chip.cpu.memory = get_memory
-	chip.cpu.screen = get_screen
+	chip.cpu.keys = &chip.keyboard
+	chip.cpu.memory = &chip.memory
+	chip.cpu.screen = &chip.screen
 
 	return chip
+}
+
+chip_loop :: proc(chip: ^Chip8) {
+	get_keyboard_event(&chip.keyboard)
+	emulate_cycle(&chip.cpu)
+	draw_on_screen(&chip.screen)
 }

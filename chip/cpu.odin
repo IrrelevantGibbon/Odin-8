@@ -64,6 +64,12 @@ decrement_timers :: proc(cpu: ^Cpu) {
 	}
 }
 
+emulate_cycles_per_frame :: proc(cpu: ^Cpu) {
+	for i in 0 ..< CYCLE_PER_FRAME {
+		emulate_cycle(cpu)
+	}
+}
+
 emulate_cycle :: proc(cpu: ^Cpu) {
 	opcode := fetch(cpu)
 	nibble := decode(opcode)
