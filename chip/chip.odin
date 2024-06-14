@@ -78,7 +78,7 @@ load_rom :: proc(file_name: string, memory: ^[MEMORY_SIZE]u8) -> u8 {
 		return 1
 	}
 
-	read_bytes, _ := os.read_ptr(file, mem.ptr_offset(memory + OFFSET_START_PROGRAM), int(size))
+	read_bytes, _ := os.read_ptr(file, mem.ptr_offset(memory, OFFSET_START_PROGRAM), int(size))
 	if read_bytes != int(size) {
 		log.error("Error reading file")
 		return 1

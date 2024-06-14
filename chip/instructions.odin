@@ -153,13 +153,13 @@ DRW :: #force_inline proc(cpu: ^Cpu, x: u8, y: u8, n: u8) {
 }
 
 SKP :: #force_inline proc(cpu: ^Cpu, x: u8) {
-	if cpu.keys()[cpu.v_register[x]] == 1 {
+	if cpu.keys[cpu.v_register[x]] == 1 {
 		cpu.program_counter += 2
 	}
 }
 
 SKNP :: #force_inline proc(cpu: ^Cpu, x: u8) {
-	if cpu.keys()[cpu.v_register[x]] == 0 {
+	if cpu.keys[cpu.v_register[x]] == 0 {
 		cpu.program_counter += 2
 	}
 }
@@ -170,7 +170,7 @@ LD_REG_DT :: #force_inline proc(cpu: ^Cpu, x: u8) {
 
 LD_KEY :: #force_inline proc(cpu: ^Cpu, x: u8) {
 	for i in 0 ..< 16 {
-		if cpu.keys()[i] == 1 {
+		if cpu.keys[i] == 1 {
 			cpu.v_register[x] = u8(i)
 			return
 		}
