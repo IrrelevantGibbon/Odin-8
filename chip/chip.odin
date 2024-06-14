@@ -1,5 +1,6 @@
 package chip
 
+import "core:fmt"
 import "core:log"
 import "core:mem"
 import "core:os"
@@ -59,7 +60,7 @@ chip_loop :: proc(chip: ^Chip8) {
 }
 
 load_rom :: proc(file_name: string, memory: ^[MEMORY_SIZE]u8) -> u8 {
-	file, err := os.open(file_name, os.O_RDONLY)
+	file, err := os.open(file_name, os.O_RDWR)
 	if err != 0 {
 		log.error("Failed to open file")
 		return 1
@@ -78,11 +79,10 @@ load_rom :: proc(file_name: string, memory: ^[MEMORY_SIZE]u8) -> u8 {
 		return 1
 	}
 
-	read_bytes, _ := os.read_ptr(file, mem.ptr_offset(memory, OFFSET_START_PROGRAM), int(size))
+	read_bytes, ec := os.read_ptr(file, &memory[OFFSET_START_PROGRAM], int(size))
 	if read_bytes != int(size) {
 		log.error("Error reading file")
 		return 1
 	}
-
 	return 0
 }
