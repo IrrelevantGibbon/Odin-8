@@ -16,7 +16,7 @@ Cpu :: struct {
 	stack_pointer:   u8,
 	stack:           [16]u16,
 	rpl_flag:        [8]u8,
-	memory:          ^[4096]u8,
+	memory:          ^[MEMORY_SIZE]u8,
 	screen:          ^Screen,
 	keys:            ^[16]u8,
 }

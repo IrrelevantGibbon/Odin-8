@@ -1,8 +1,10 @@
 package chip
 
+OFFSET_START_PROGRAM :: 0x200
+MEMORY_SIZE :: 0x1000
 
 when CHIP_TYPE == ChipType.Chip8 {
-	FONT :: [80]u8 {
+	font := [80]u8 {
 		0xF0,
 		0x90,
 		0x90,
@@ -85,7 +87,7 @@ when CHIP_TYPE == ChipType.Chip8 {
 		0x80, // F
 	}
 } else {
-	FONT :: [240]u8 {
+	font := [240]u8 {
 		0xF0,
 		0x90,
 		0x90,
