@@ -6,9 +6,8 @@ import "core:math/rand"
 import "core:mem"
 
 CLS :: #force_inline proc(cpu: ^Cpu) {
-	screen := cpu.screen()
 	for i in 0 ..< (SCREEN_WIDTH * SCREEN_HEIGHT) {
-		screen.frame[i] = 0
+		cpu.screen.frame[i] = 0
 	}
 }
 
@@ -140,10 +139,10 @@ DRW :: #force_inline proc(cpu: ^Cpu, x: u8, y: u8, n: u8) {
 	}
 
 	for i in 0 ..< heigh {
-		pxl := cpu.memory()[cpu.idx_register + u16(i)]
+		pxl := cpu.memory[cpu.idx_register + u16(i)]
 		for j in 0 ..< width {
 			if (pxl & (0x80 >> u32(j))) != 0 {
-				screenPxl := &cpu.screen().frame[(vy + u16(i)) * SCREEN_WIDTH + vx + u16(j)]
+				screenPxl := &cpu.screen.frame[(vy + u16(i)) * SCREEN_WIDTH + vx + u16(j)]
 				if screenPxl^ == 1 {
 					cpu.v_register[0xF] = 1
 				}
@@ -201,20 +200,20 @@ LD_F :: #force_inline proc(cpu: ^Cpu, x: u8) {
 
 LD_B :: #force_inline proc(cpu: ^Cpu, x: u8) {
 	vx := cpu.v_register[x]
-	cpu.memory()[cpu.idx_register] = vx / 100
-	cpu.memory()[cpu.idx_register + 1] = (vx / 10) % 10
-	cpu.memory()[cpu.idx_register + 2] = vx % 10
+	cpu.memory[cpu.idx_register] = vx / 100
+	cpu.memory[cpu.idx_register + 1] = (vx / 10) % 10
+	cpu.memory[cpu.idx_register + 2] = vx % 10
 }
 
 LD_MEM :: #force_inline proc(cpu: ^Cpu, x: u8) {
 	for i in 0 ..< x {
-		cpu.memory()[cpu.idx_register + u16(i)] = cpu.v_register[i]
+		cpu.memory[cpu.idx_register + u16(i)] = cpu.v_register[i]
 	}
 }
 
 LD_REG_MEM :: #force_inline proc(cpu: ^Cpu, x: u8) {
 	for i in 0 ..< x {
-		cpu.v_register[i] = cpu.memory()[cpu.idx_register + u16(i)]
+		cpu.v_register[i] = cpu.memory[cpu.idx_register + u16(i)]
 	}
 }
 
