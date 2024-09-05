@@ -4,8 +4,7 @@ import "core:fmt"
 import "core:log"
 import "core:mem"
 import "core:os"
-
-Version :: "0.0.1"
+import rl "vendor:raylib"
 
 ChipType :: enum {
 	Chip8,
@@ -34,6 +33,23 @@ Chip8 :: struct {
 	screen:   Screen,
 }
 
+Play :: proc(filename: string) {
+	chip_8 := init_chip()
+	defer free(chip_8)
+
+	file_error := LoadRomIntoMemory(filename, &chip_8.memory)
+	if file_error != nil  {
+		log.errorf("Error while trying to load file into memory '%s': %v\n", filename, file_error)
+		os.exit(1)
+	}
+
+	init_window()
+	defer shutdown_window()
+	for !rl.WindowShouldClose() {
+		chip_loop(chip_8)
+	}
+}
+
 
 init_chip :: proc() -> ^Chip8 {
 	chip := new(Chip8)
@@ -49,7 +65,7 @@ init_chip :: proc() -> ^Chip8 {
 	chip.cpu.screen = &chip.screen
 
 	mem.copy(&chip.memory, &font, len(font))
-	load_rom(os.args[1], &chip.memory)
+	
 	return chip
 }
 
@@ -57,32 +73,4 @@ chip_loop :: proc(chip: ^Chip8) {
 	get_keyboard_event(&chip.keyboard)
 	emulate_cycle(&chip.cpu)
 	draw_on_screen(&chip.screen)
-}
-
-load_rom :: proc(file_name: string, memory: ^[MEMORY_SIZE]u8) -> u8 {
-	file, err := os.open(file_name, os.O_RDWR)
-	if err != 0 {
-		log.error("Failed to open file")
-		return 1
-	}
-
-	defer os.close(file)
-
-	size, size_err := os.file_size(file)
-	if size_err != 0 {
-		log.error("Failed to get file size")
-		return 1
-	}
-
-	if size > len(memory) - OFFSET_START_PROGRAM {
-		log.error("File size exceeds memory capacity")
-		return 1
-	}
-
-	read_bytes, ec := os.read_ptr(file, &memory[OFFSET_START_PROGRAM], int(size))
-	if read_bytes != int(size) {
-		log.error("Error reading file")
-		return 1
-	}
-	return 0
 }
