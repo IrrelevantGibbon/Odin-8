@@ -11,7 +11,7 @@ Version :: "0.0.1"
 
 Command :: enum {
 	PLAY,
-	DISSASSEMBLE
+	DISASSEMBLE
 }
 
 main :: proc() {
@@ -37,7 +37,7 @@ main :: proc() {
 	switch Command(command) {
 	case Command.PLAY:
 		chip.Play(filename)
-	case Command.DISSASSEMBLE:
+	case Command.DISASSEMBLE:
 		chip.Disassemble(filename)
 	}
 }
