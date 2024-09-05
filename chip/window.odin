@@ -9,19 +9,19 @@ WINDOW_HEIGHT :: 320
 when CHIP_TYPE == ChipType.SCHIP {WINDOW_NAME :: "Super Chip-48"} else {WINDOW_NAME :: "Chip-8"}
 
 
-init_window :: proc() {
+InitWindow :: proc() {
 	rl.SetTraceLogLevel(.WARNING)
 	rl.SetConfigFlags(WINDOW_FLAGS)
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
 	rl.InitAudioDevice()
 }
 
-shutdown_window :: proc() {
+ShutdownWindow :: proc() {
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
 }
 
-draw_on_screen :: proc(screen: ^Screen) {
+DrawOnScreen :: proc(screen: ^Screen) {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
 

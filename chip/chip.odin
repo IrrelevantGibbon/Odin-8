@@ -44,8 +44,8 @@ Play :: proc(filename: string) {
 		os.exit(1)
 	}
 
-	init_window()
-	defer shutdown_window()
+	InitWindow()
+	defer ShutdownWindow()
 	for !rl.WindowShouldClose() {
 		ChipLoop(chip_8)
 	}
@@ -72,5 +72,5 @@ InitChip :: proc() -> ^Chip8 {
 ChipLoop :: proc(chip: ^Chip8) {
 	GetKeyboardEvent(&chip.keyboard)
 	EmulateCycle(&chip.cpu)
-	draw_on_screen(&chip.screen)
+	DrawOnScreen(&chip.screen)
 }
