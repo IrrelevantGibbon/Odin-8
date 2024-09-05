@@ -21,12 +21,12 @@ KeyboardInput :: [16]rl.KeyboardKey {
 	rl.KeyboardKey.V,
 }
 
-get_keyboard_event :: proc(keyboard: ^[16]u8) {
-	get_keyup_event(keyboard)
-	get_keydown_event(keyboard)
+GetKeyboardEvent :: proc(keyboard: ^[16]u8) {
+	GetKeyupEvent(keyboard)
+	GetKeydownEvent(keyboard)
 }
 
-get_keyup_event :: proc(keyboard: ^[16]u8) {
+GetKeyupEvent :: proc(keyboard: ^[16]u8) {
 	keyboard := keyboard
 	for input, idx in KeyboardInput {
 		if rl.IsKeyUp(input) {
@@ -35,7 +35,7 @@ get_keyup_event :: proc(keyboard: ^[16]u8) {
 	}
 }
 
-get_keydown_event :: proc(keyboard: ^[16]u8) {
+GetKeydownEvent :: proc(keyboard: ^[16]u8) {
 	keyboard := keyboard
 	for input, idx in KeyboardInput {
 		if rl.IsKeyDown(input) {

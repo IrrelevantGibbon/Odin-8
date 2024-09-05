@@ -34,10 +34,11 @@ Chip8 :: struct {
 }
 
 Play :: proc(filename: string) {
-	chip_8 := init_chip()
+	chip_8 := InitChip()
 	defer free(chip_8)
 
 	file_error := LoadRomIntoMemory(filename, &chip_8.memory)
+
 	if file_error != nil  {
 		log.errorf("Error while trying to load file into memory '%s': %v\n", filename, file_error)
 		os.exit(1)
@@ -46,15 +47,15 @@ Play :: proc(filename: string) {
 	init_window()
 	defer shutdown_window()
 	for !rl.WindowShouldClose() {
-		chip_loop(chip_8)
+		ChipLoop(chip_8)
 	}
 }
 
 
-init_chip :: proc() -> ^Chip8 {
+InitChip :: proc() -> ^Chip8 {
 	chip := new(Chip8)
 	chip^ = Chip8 {
-		init_cpu(),
+		InitCpu(),
 		[16]u8{},
 		[MEMORY_SIZE]u8{},
 		Screen{[SCREEN_WIDTH * SCREEN_HEIGHT]u8{}, [SCREEN_WIDTH * SCREEN_HEIGHT]u8{}},
@@ -65,12 +66,11 @@ init_chip :: proc() -> ^Chip8 {
 	chip.cpu.screen = &chip.screen
 
 	mem.copy(&chip.memory, &font, len(font))
-	
 	return chip
 }
 
-chip_loop :: proc(chip: ^Chip8) {
-	get_keyboard_event(&chip.keyboard)
-	emulate_cycle(&chip.cpu)
+ChipLoop :: proc(chip: ^Chip8) {
+	GetKeyboardEvent(&chip.keyboard)
+	EmulateCycle(&chip.cpu)
 	draw_on_screen(&chip.screen)
 }

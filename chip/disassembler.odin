@@ -23,7 +23,7 @@ Disassemble :: proc(filename: string) {
 
 /*InitDisassembler :: proc(file_name: string) -> Disassembler {
 	disasembler = Disassembler{
-		init_cpu(),
+		InitCpu(),
 		[MEMORY_SIZE]u8{},
 	}
 

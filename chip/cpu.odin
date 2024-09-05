@@ -30,31 +30,31 @@ Nibble :: struct {
 	nnn:    u16,
 }
 
-dec_x :: #force_inline proc(opcode: u16) -> u8 {
+DecX :: #force_inline proc(opcode: u16) -> u8 {
 	return u8((opcode & 0x0F00) >> 8)
 }
 
-dec_y :: #force_inline proc(opcode: u16) -> u8 {
+DecY :: #force_inline proc(opcode: u16) -> u8 {
 	return u8((opcode & 0x00F0) >> 4)
 }
 
-dec_n :: #force_inline proc(opcode: u16) -> u8 {
+DecN :: #force_inline proc(opcode: u16) -> u8 {
 	return u8(opcode & 0x000F)
 }
 
-dec_nn :: #force_inline proc(opcode: u16) -> u8 {
+DecNN :: #force_inline proc(opcode: u16) -> u8 {
 	return u8(opcode & 0x00FF)
 }
 
-dec_nnn :: #force_inline proc(opcode: u16) -> u16 {
+DecNNN :: #force_inline proc(opcode: u16) -> u16 {
 	return opcode & 0x0FFF
 }
 
-init_cpu :: proc() -> Cpu {
+InitCpu :: proc() -> Cpu {
 	return Cpu{[16]u8{}, 0, 0, 0, OFFSET_START_PROGRAM, 0, [16]u16{}, [8]u8{}, nil, nil, nil}
 }
 
-decrement_timers :: proc(cpu: ^Cpu) {
+DecrementTimers :: proc(cpu: ^Cpu) {
 	if cpu.delay_timer > 0 {
 		cpu.delay_timer -= 1
 	}
@@ -64,38 +64,38 @@ decrement_timers :: proc(cpu: ^Cpu) {
 	}
 }
 
-emulate_cycles_per_frame :: proc(cpu: ^Cpu) {
+EmulateCyclesPerFrame :: proc(cpu: ^Cpu) {
 	for i in 0 ..< CYCLE_PER_FRAME {
-		emulate_cycle(cpu)
+		EmulateCycle(cpu)
 	}
 }
 
-emulate_cycle :: proc(cpu: ^Cpu) {
-	opcode := fetch(cpu)
-	nibble := decode(opcode)
-	execute(cpu, nibble)
+EmulateCycle :: proc(cpu: ^Cpu) {
+	opcode := Fetch(cpu)
+	nibble := Decode(opcode)
+	Execute(cpu, nibble)
 }
 
-fetch :: proc(cpu: ^Cpu) -> u16 {
+Fetch :: proc(cpu: ^Cpu) -> u16 {
 	opcode := u16(cpu.memory[cpu.program_counter]) << 8 | u16(cpu.memory[cpu.program_counter + 1])
 	cpu.program_counter += 2
 	return opcode
 }
 
-decode :: proc(opcode: u16) -> Nibble {
+Decode :: proc(opcode: u16) -> Nibble {
 	return(
 		Nibble {
 			opcode,
-			dec_x(opcode),
-			dec_y(opcode),
-			dec_n(opcode),
-			dec_nn(opcode),
-			dec_nnn(opcode),
+			DecX(opcode),
+			DecY(opcode),
+			DecN(opcode),
+			DecNN(opcode),
+			DecNNN(opcode),
 		} \
 	)
 }
 
-execute :: proc(cpu: ^Cpu, nibble: Nibble) {
+Execute :: proc(cpu: ^Cpu, nibble: Nibble) {
 	op := nibble.opcode
 	switch op & 0xF000 {
 	case 0x0000:
@@ -192,5 +192,5 @@ execute :: proc(cpu: ^Cpu, nibble: Nibble) {
 	case:
 		log.info("Unknown main switch opcode: 0x%X\n", op)
 	}
-	decrement_timers(cpu)
+	DecrementTimers(cpu)
 }
