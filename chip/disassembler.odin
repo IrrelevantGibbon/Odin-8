@@ -22,6 +22,7 @@ InitDisassembler :: proc() -> ^Disassembler {
 
 Disassemble :: proc(filename: string) {
 	disassembler := InitDisassembler()
+	defer free(disassembler)
 	file_error := LoadRomIntoMemory(filename, &disassembler.memory)
 	
 	if file_error != nil  {

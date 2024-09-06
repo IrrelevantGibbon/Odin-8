@@ -40,4 +40,7 @@ main :: proc() {
 	case Command.DISASSEMBLE:
 		chip.Disassemble(filename)
 	}
+
+	free_all(context.allocator)
+	free_all(context.temp_allocator)
 }
