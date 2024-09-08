@@ -30,7 +30,24 @@ Disassemble :: proc(filename: string) {
 		os.exit(1)
 	}
 
-	file_handler, create_error := CreateFile("truc.ch8")
+	rom_name, mem_err := GetRomName(filename)
+	defer delete(rom_name)
+
+	if mem_err != nil {
+		log.errorf("Memory allocation error %v\n", mem_err)
+		os.exit(1)
+	}
+
+	res, concat_error := str.concatenate({rom_name, ".asm"}, context.temp_allocator)
+	defer delete(res)
+
+	if concat_error != nil  {
+		log.errorf("Memory allocation error %v\n", concat_error)
+		os.exit(1)
+	}
+
+
+	file_handler, create_error := CreateFile(res)
 	if create_error != nil  {
 		log.errorf("Error while trying to create file '%s': %v\n", filename, create_error)
 		os.exit(1)
@@ -52,7 +69,6 @@ IterateOntoMemory :: proc(disassembler : ^Disassembler, file_handler: ^FileHandl
 }
 
 DisExecute :: proc(cpu: ^Cpu, nibble: Nibble, fd: os.Handle) {
-	// 0x%X
 	op := nibble.opcode
 	switch op & 0xF000 {
 	case 0x0000:
@@ -63,9 +79,9 @@ DisExecute :: proc(cpu: ^Cpu, nibble: Nibble, fd: os.Handle) {
 			fmt.fprintf(fd, "RET", newline=true)
 		}
 	case 0x1000:
-		fmt.fprintf(fd, "JP %i", nibble.nnn, newline=true)
+		fmt.fprintf(fd, "JP 0x%X", nibble.nnn, newline=true)
 	case 0x2000:
-		fmt.fprintf(fd, "CALL %i", nibble.nnn, newline=true)
+		fmt.fprintf(fd, "CALL 0x%X", nibble.nnn, newline=true)
 	case 0x3000:
 		fmt.fprintf(fd, "SE X%i, %i", nibble.x, nibble.nn, newline=true)
 	case 0x4000:
@@ -103,7 +119,7 @@ DisExecute :: proc(cpu: ^Cpu, nibble: Nibble, fd: os.Handle) {
 	case 0xA000:
 		fmt.fprintf(fd, "LD_I %i", nibble.nnn, newline=true)
 	case 0xB000:
-		fmt.fprintf(fd, "JP_V0 %i", nibble.nnn, newline=true)
+		fmt.fprintf(fd, "JP_V0 0x%X", nibble.nnn, newline=true)
 	case 0xC000:
 		fmt.fprintf(fd, "RND X%i, %i", nibble.x, nibble.nn, newline=true)
 	case 0xD000:
