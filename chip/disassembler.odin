@@ -1,9 +1,16 @@
 package chip
 
 import "core:log"
+import "core:mem"
 import "core:os"
 import "core:fmt"
 import str "core:strings"
+
+
+DisassembleError :: union {
+	mem.Allocator_Error,
+	FileError
+}
 
 Disassembler :: struct {
 	cpu: Cpu,
@@ -20,42 +27,16 @@ InitDisassembler :: proc() -> ^Disassembler {
 	return disassembler
 }
 
-Disassemble :: proc(filename: string) {
+Disassemble :: proc(filename: string) -> DisassembleError {
 	disassembler := InitDisassembler()
 	defer free(disassembler)
-	file_error := LoadRomIntoMemory(filename, &disassembler.memory)
-	
-	if file_error != nil  {
-		log.errorf("Error while trying to load file into memory '%s': %v\n", filename, file_error)
-		os.exit(1)
-	}
-
-	rom_name, mem_err := GetRomName(filename)
-	defer delete(rom_name)
-
-	if mem_err != nil {
-		log.errorf("Memory allocation error %v\n", mem_err)
-		os.exit(1)
-	}
-
-	res, concat_error := str.concatenate({rom_name, ".asm"}, context.temp_allocator)
-	defer delete(res)
-
-	if concat_error != nil  {
-		log.errorf("Memory allocation error %v\n", concat_error)
-		os.exit(1)
-	}
-
-
-	file_handler, create_error := CreateFile(res)
-	if create_error != nil  {
-		log.errorf("Error while trying to create file '%s': %v\n", filename, create_error)
-		os.exit(1)
-	}
-
+	LoadRomIntoMemory(filename, &disassembler.memory) or_return
+	rom_name := GetRomName(filename, context.temp_allocator) or_return
+	rom_concat_name := str.concatenate({rom_name, ".asm"}, context.temp_allocator) or_return
+	file_handler := CreateFile(rom_concat_name) or_return
 	defer DeleteFileHandler(file_handler)
-
 	IterateOntoMemory(disassembler, file_handler)
+	return nil
 }
 
 IterateOntoMemory :: proc(disassembler : ^Disassembler, file_handler: ^FileHandler) {

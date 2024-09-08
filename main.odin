@@ -38,7 +38,10 @@ main :: proc() {
 	case Command.PLAY:
 		chip.Play(filename)
 	case Command.DISASSEMBLE:
-		chip.Disassemble(filename)
+		err := chip.Disassemble(filename)
+		if err != nil {
+			log.errorf("Error during file disassembling %v", err)
+		}
 	}
 
 	free_all(context.allocator)
