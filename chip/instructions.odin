@@ -65,7 +65,7 @@ AND :: #force_inline proc(cpu: ^Cpu, x: u8, y: u8) {
 }
 
 XOR :: #force_inline proc(cpu: ^Cpu, x: u8, y: u8) {
-	cpu.v_register[x] = cpu.v_register[y]
+	cpu.v_register[x] ^= cpu.v_register[y]
 }
 
 ADD_REG :: #force_inline proc(cpu: ^Cpu, x: u8, y: u8) {
